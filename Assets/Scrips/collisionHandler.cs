@@ -9,11 +9,13 @@ public class collisionHandler : MonoBehaviour
     // CACHE - e.g. references for readability or speed
     // STATE - private instance (member) variables
 
-    [SerializeField] float lvlEndDelay = 1f;
+    [SerializeField] float lvlEndDelay = 2f;
     [SerializeField] AudioClip crashExp;
     [SerializeField] AudioClip winSFX;
 
     AudioSource audioSource;
+
+    bool isTransitioning = false;
 
     void Start()
     {
@@ -22,6 +24,8 @@ public class collisionHandler : MonoBehaviour
 
     void OnCollisionEnter(Collision other)
     {
+        if (isTransitioning){  return;  }
+
         switch (other.gameObject.tag)
         {
             case "Friendly":
@@ -38,6 +42,8 @@ public class collisionHandler : MonoBehaviour
 
     void StartSuccessSequence()
     {
+        audioSource.Stop();
+        isTransitioning = true;
         // todo add particle effect upon crash
         GetComponent<Movement>().enabled = false;
         audioSource.PlayOneShot(winSFX);
@@ -46,6 +52,8 @@ public class collisionHandler : MonoBehaviour
 
         void StartCrashSequence()
     {
+        audioSource.Stop();
+        isTransitioning = true;
         // todo add particle effect upon crash
         GetComponent<Movement>().enabled = false;
         audioSource.PlayOneShot(crashExp);
